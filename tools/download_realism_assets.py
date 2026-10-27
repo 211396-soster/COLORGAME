@@ -35,7 +35,7 @@ def main() -> None:
                     target.write_bytes(archive.read(member))
                     found.add(name.rsplit("_", 1)[-1])
                     print(f"  OK {target.relative_to(ROOT)} ({target.stat().st_size // 1024} KB)", flush=True)
-            if not any(name.startswith(prefix) and name.endswith("_Color.jpg") for name in archive.namelist()):
+            if not any(Path(member).name.startswith(prefix) and Path(member).name.endswith("_Color.jpg") for member in archive.namelist()):
                 raise RuntimeError(f"Nenhuma textura de cor encontrada no pacote {filename}")
     print("Texturas PBR prontas para o importador do Godot.", flush=True)
 
