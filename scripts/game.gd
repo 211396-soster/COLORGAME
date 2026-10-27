@@ -13,7 +13,7 @@ var money: int = 0
 var deliveries: int = 0
 var shifts: int = 0
 var best_wave: int = 0
-var quality: int = 1          # 0 baixa, 1 média, 2 alta
+var quality: int = 2          # 0 baixa, 1 média, 2 alta; alta como padrão em instalações novas
 var show_fps: bool = false
 var last_mode: String = "delivery"
 
@@ -98,6 +98,6 @@ func load_game() -> void:
 	deliveries = int(d.get("deliveries", 0))
 	shifts = int(d.get("shifts", 0))
 	best_wave = int(d.get("best_wave", 0))
-	quality = int(d.get("quality", 1))
+	quality = clampi(int(d.get("quality", 2)), 0, 2)
 	show_fps = bool(d.get("show_fps", false))
 	last_mode = str(d.get("last_mode", "delivery"))

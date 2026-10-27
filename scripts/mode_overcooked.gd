@@ -66,7 +66,16 @@ func _build_env() -> void:
 	env.ambient_light_color = Color(1.0, 0.93, 0.84)
 	env.ambient_light_energy = 0.55
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
-	env.tonemap_exposure = 1.05
+	env.tonemap_exposure = 1.0
+	env.adjustment_enabled = true
+	env.adjustment_saturation = 1.04
+	env.adjustment_contrast = 1.06
+	# Brilho suave nas lâmpadas e superfícies claras, sem exagerar no bloom.
+	env.glow_enabled = true
+	env.glow_intensity = 0.22
+	env.glow_strength = 0.55
+	env.glow_bloom = 0.03
+	env.glow_hdr_threshold = 1.3
 	we.environment = env
 	add_child(we)
 	var sun = DirectionalLight3D.new()
