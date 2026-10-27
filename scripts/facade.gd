@@ -42,9 +42,8 @@ static func wall_material(kind: int = 0) -> StandardMaterial3D:
 				img.fill_rect(Rect2i(x0 + 4, 27, 24, 188), Color(0.32, 0.47, 0.56))
 				img.fill_rect(Rect2i(x0 + 31, 27, 25, 188), Color(0.17, 0.29, 0.36))
 				img.fill_rect(Rect2i(x0 + 7, 31, 4, 180), Color(0.55, 0.66, 0.7))
-				for yy in [72, 122, 172]:
-					img.fill_rect(Rect2i(x0, yy, 60, 4), Color(0.72, 0.73, 0.72))
-					img.fill_rect(Rect2i(x0 - 2, yy + 4, 64, 3), Color(0.88, 0.87, 0.84))
+				img.fill_rect(Rect2i(x0, 120, 60, 4), Color(0.72, 0.73, 0.72))
+				img.fill_rect(Rect2i(x0 - 2, 124, 64, 3), Color(0.88, 0.87, 0.84))
 				img.fill_rect(Rect2i(x0 - 3, 219, 66, 5), Color(0.9, 0.89, 0.86))
 		img.generate_mipmaps()
 		var m = StandardMaterial3D.new()
