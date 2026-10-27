@@ -1,0 +1,38 @@
+COLOR TINTAS: PASSO FUNDO - projeto Godot 4 (renderizador Mobile)
+
+COMO USAR NO CELULAR
+1. Extraia o ZIP. Se quiser manter seu export (keystore/preset), extraia POR CIMA da pasta do projeto atual
+   (sobrescrevendo scripts, scenes, project.godot). Pode apagar scripts antigos que não estão aqui.
+2. Abra no Godot (4.4+), aguarde importar. Rode a cena scenes/menu.tscn.
+3. Projeto > Exportar > Android > Exportar projeto (APK).
+
+ESTRUTURA
+ scripts/  game (autoload), city (mapa OSM), facade (loja), chars, props, truck_model,
+           mode_delivery / mode_overcooked / mode_zombie, menu, touch_ui, minimap
+ data/city.tres  mapa de Passo Fundo (ruas, prédios, parques) já convertido do map_osm.xml
+ tools/    osm_to_json.py + make_city_tres.py (regeram o mapa com outro map_osm.xml)
+ tex/      logo e fachada (fotos da loja)
+
+REGERAR O MAPA (PC): python3 tools/osm_to_json.py map_osm.xml data/city.json && python3 tools/make_city_tres.py
+Mapa: dados (c) colaboradores do OpenStreetMap, licença ODbL.
+
+CRÉDITOS: mapa © colaboradores do OpenStreetMap (ODbL). Modelos procedurais próprios. Kenney (CC0) apenas como referência de estilo.
+Modo entrega: carregue a caçamba nos paletes, dirija até o cliente, descarregue e receba; volte à loja para o próximo pedido.
+
+V4 - GRÁFICOS DO MODO ENTREGA
+ Poly Haven (CC0): asfalto, calçada (espinha de peixe), grama e céu HDRI (assets/sky, tex/ph).
+ Casas com telhado de duas águas, porta e chaminé; prédios com janela em faixa; postes de luz;
+ árvores arredondadas; carros estacionados (com colisão) e tráfego que segue ruas reais.
+ Se faltar alguma textura/HDRI, o jogo usa cores simples no lugar (não trava).
+
+V5 - LATA DE TINTA ESCANEADA (Suvinil)
+ assets/models/lata_tinta.glb: sua lata escaneada, em pé, reduzida para ~2.800 triângulos.
+ Usada nas latas do modo Entrega (paletes e carga) e nas latas-base e pilhas da loja.
+ Latas coloridas do jogo da loja (azul/vermelha/amarela) continuam procedurais para indicar a cor.
+
+GITHUB E AGENTES DE IA
+- Leia README.md e AGENTS.md antes de alterar o projeto.
+- A memória central fica em docs/MEMORIA_MESTRA.md.
+- O estado verificado fica em docs/ESTADO_ATUAL.md.
+- Instruções de publicação inicial: INSTRUCOES_GITHUB.txt.
+- Faça tarefas em branches e abra pull requests; não trabalhe diretamente na main.
