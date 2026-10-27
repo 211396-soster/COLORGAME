@@ -11,6 +11,7 @@ on:
       - "data/**"
       - "scenes/**"
       - "scripts/**"
+      - "tools/download_realism_assets.py"
       - "tex/**"
       - "icon.svg"
       - ".github/workflows/build-windows.yml"
@@ -24,6 +25,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Download CC0 PBR textures
+        run: python tools/download_realism_assets.py
 
       - name: Set up Godot 4.4.1
         uses: chickensoft-games/setup-godot@v2
