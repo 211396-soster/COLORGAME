@@ -66,6 +66,10 @@ func _tex_mat(path: String, scale: float, tint: Color, rough: float) -> Standard
 		m.uv1_world_triplanar = true
 		m.uv1_scale = Vector3(scale, scale, scale)
 		m.albedo_color = tint
+		# Micro-relevo sutil para quebrar o aspecto liso sem aumentar o tamanho do projeto.
+		m.normal_enabled = true
+		m.normal_texture = U.detail_normal_texture(17 if scale < 0.3 else 31)
+		m.normal_scale = 0.28 if scale < 0.3 else 0.18
 		m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 	else:
 		m.albedo_color = Color(0.3, 0.3, 0.32) if scale < 0.3 else Color(0.7, 0.7, 0.67)
