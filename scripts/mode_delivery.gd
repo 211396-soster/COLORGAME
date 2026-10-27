@@ -2,7 +2,9 @@ extends Node3D
 ## Modo 3 - Entregas em Passo Fundo.
 ## Ciclo: CARREGAR a caminhonete na loja -> DIRIGIR até o cliente -> DESCARREGAR e entregar -> voltar à loja.
 
-const MAX_SPEED = 24.0
+const MAX_SPEED = 33.3 # 120 km/h em m/s
+const MAX_REVERSE_SPEED = 5.5
+const VEHICLE_WHEELBASE = 2.8
 const NAMES = ["João Silva", "Maria Souza", "Carlos Pereira", "Ana Lima", "Pedro Alves", "Fernanda Costa",
 	"Lucas Rocha", "Juliana Dias", "Marcos Teixeira", "Patrícia Gomes", "Rafael Moraes", "Camila Freitas"]
 const KIND_NAME = {"tinta": "Lata de tinta", "balde": "Balde de massa", "caixa": "Caixa", "rolo": "Rolo"}
@@ -50,6 +52,7 @@ var player: Node3D
 var pyaw: float = 0.0
 var carrying: String = ""
 var carry_node: Node3D = null
+var carried_item_index: int = -1
 var items: Array = []        # [{kind, col, loaded, delivered, node}]
 var pallets: Array = []      # [{kind, node, pos}]
 var guide: Node3D
@@ -484,6 +487,7 @@ func _place_in_bed(idx: int) -> void:
 	var node = carry_node
 	carry_node = null
 	carrying = ""
+	carried_item_index = -1
 	player.get_meta("armL").rotation.x = 0.0
 	player.get_meta("armR").rotation.x = 0.0
 	var gp = node.global_position
@@ -558,13 +562,13 @@ func _unloading_logic() -> void:
 		lbl_hint.text = "Pegue a encomenda na caçamba"
 		ui.set_visible_button("act", close)
 		if close and ui.consume("act"):
-			for i in range(items.size() - 1, -1, -1):
+			# Pegue o primeiro item ainda não entregue; só conta como entregue quando chega ao cliente.
+			for i in range(items.size()):
 				var it: Dictionary = items[i]
 				if it["loaded"] and not it["delivered"] and it["node"] != null:
 					it["node"].queue_free()
 					it["node"] = null
-					it["delivered"] = true   # marcado como em mãos; contado como entregue ao colocar
-					it["carried"] = true
+					carried_item_index = i
 					_hold(it["kind"], it["col"])
 					break
 	else:
@@ -587,6 +591,10 @@ func _give_to_customer() -> void:
 	var tw = create_tween()
 	tw.tween_property(fly, "global_position", cust_pos + Vector3(0, 1.1, 0), 0.25)
 	tw.tween_callback(fly.queue_free)
+	if carried_item_index >= 0 and carried_item_index < items.size():
+		items[carried_item_index]["delivered"] = true
+		items[carried_item_index]["node"] = null
+	carried_item_index = -1
 	carrying = ""
 	player.get_meta("armL").rotation.x = 0.0
 	player.get_meta("armR").rotation.x = 0.0
@@ -647,16 +655,27 @@ func _drive(delta: float) -> void:
 		str_in += 1.0
 	if ui.is_down("right"):
 		str_in -= 1.0
+	# Aceleração, travagem e arrasto aproximados para uma picape de rua.
 	if ui.is_down("gas"):
-		speed += (10.0 if speed >= 0.0 else 20.0) * delta
+		if speed < 0.0:
+			speed = move_toward(speed, 0.0, 7.0 * delta)
+		else:
+			speed = move_toward(speed, MAX_SPEED, 4.0 * delta)
 	elif ui.is_down("brake"):
-		speed -= (22.0 if speed > 0.5 else 8.0) * delta
+		if speed > 0.0:
+			speed = move_toward(speed, 0.0, 8.5 * delta)
+		else:
+			speed = move_toward(speed, -MAX_REVERSE_SPEED, 2.4 * delta)
 	else:
-		speed = move_toward(speed, 0.0, 3.5 * delta)
-	speed = clampf(speed, -7.0, MAX_SPEED)
-	steer = lerpf(steer, str_in, minf(1.0, 7.0 * delta))
-	var turn = steer * 1.8 * clampf(absf(speed) / 5.0, 0.0, 1.0) / (1.0 + absf(speed) * 0.05)
-	yaw += turn * delta * signf(speed)
+		var drag = 0.55 + absf(speed) * 0.035
+		speed = move_toward(speed, 0.0, drag * delta)
+	speed = clampf(speed, -MAX_REVERSE_SPEED, MAX_SPEED)
+	steer = lerpf(steer, str_in, minf(1.0, 5.5 * delta))
+	# Modelo bicicleta: direção diminui progressivamente em alta velocidade.
+	var speed_ratio = clampf(absf(speed) / MAX_SPEED, 0.0, 1.0)
+	var max_wheel_angle = lerpf(0.58, 0.22, speed_ratio)
+	var turn_rate = (speed / VEHICLE_WHEELBASE) * tan(steer * max_wheel_angle)
+	yaw += turn_rate * delta
 	var fwd = Vector3(-sin(yaw), 0, -cos(yaw))
 	var np = truck.position + fwd * speed * delta
 	var pf = city.push_out(np + fwd * 1.8, 1.15)
