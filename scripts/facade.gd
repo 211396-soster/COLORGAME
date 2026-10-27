@@ -31,6 +31,10 @@ static func wall_material(kind: int = 0) -> StandardMaterial3D:
 		m.albedo_texture = ImageTexture.create_from_image(img)
 		m.vertex_color_use_as_albedo = true
 		m.roughness = 0.85
+		# Relevo de reboco discreto para que as fachadas não pareçam plástico liso.
+		m.normal_enabled = true
+		m.normal_texture = U.detail_normal_texture(43 + kind)
+		m.normal_scale = 0.12
 		m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 		_wall_mats[kind] = m
 	return _wall_mats[kind]
