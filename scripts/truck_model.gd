@@ -58,7 +58,7 @@ static func build(with_cargo: bool = true) -> Node3D:
 		# espelhos, maçanetas e frisos da cabine
 		U.box(st, Vector3(1.02 * sx, 1.52, -0.62), Vector3(0.18, 0.13, 0.22), dark)
 		U.box(st, Vector3(1.105 * sx, 1.52, -0.62), Vector3(0.025, 0.075, 0.14), Color(0.25, 0.35, 0.42))
-		U.box(st, Vector3(0.97 * sx, 1.48, 0.2), Vector3(0.035, 0.045, 0.2), steel if false else Color(0.65, 0.67, 0.7))
+		U.box(st, Vector3(0.97 * sx, 1.48, 0.2), Vector3(0.035, 0.045, 0.2), Color(0.65, 0.67, 0.7))
 		U.box(st, Vector3(0.97 * sx, 1.25, -1.65), Vector3(0.035, 0.025, 0.45), Color(0.75, 0.76, 0.78))
 	# frisos horizontais na grade frontal e placa
 	for yy in [0.91, 0.97, 1.03]:
