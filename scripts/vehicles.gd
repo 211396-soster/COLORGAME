@@ -21,8 +21,27 @@ static func sedan_mesh() -> ArrayMesh:
 		U.box(st, Vector3(0, 0.38, -2.18), Vector3(1.85, 0.24, 0.16), dark)
 		U.box(st, Vector3(0, 0.38, 2.18), Vector3(1.85, 0.24, 0.16), dark)
 		for sx in [-1, 1]:
-			U.box(st, Vector3(0.62 * sx, 0.72, -2.16), Vector3(0.4, 0.14, 0.05), Color(1, 1, 0.85))
-			U.box(st, Vector3(0.65 * sx, 0.74, 2.16), Vector3(0.36, 0.14, 0.05), Color(0.7, 0.05, 0.05))
+			# faróis com lente, indicadores âmbar e lanternas traseiras
+			U.box(st, Vector3(0.62 * sx, 0.72, -2.16), Vector3(0.4, 0.14, 0.05), Color(1, 0.97, 0.82))
+			U.box(st, Vector3(0.78 * sx, 0.7, -2.165), Vector3(0.08, 0.12, 0.055), Color(1.0, 0.55, 0.12))
+			U.box(st, Vector3(0.65 * sx, 0.74, 2.16), Vector3(0.36, 0.14, 0.05), Color(0.72, 0.035, 0.025))
+			U.box(st, Vector3(0.83 * sx, 0.73, 2.16), Vector3(0.06, 0.1, 0.055), Color(0.95, 0.25, 0.08))
+			# retrovisores, maçanetas e saias laterais
+			U.box(st, Vector3(0.86 * sx, 1.12, -0.65), Vector3(0.18, 0.12, 0.22), body.darkened(0.12))
+			U.box(st, Vector3(0.79 * sx, 1.02, 0.22), Vector3(0.035, 0.045, 0.22), Color(0.68, 0.7, 0.73))
+			U.box(st, Vector3(0.79 * sx, 1.02, 0.9), Vector3(0.035, 0.045, 0.22), Color(0.68, 0.7, 0.73))
+			U.box(st, Vector3(0.84 * sx, 0.38, 0.0), Vector3(0.12, 0.16, 2.6), dark)
+		# grade frontal, placa, para-choques e linhas de capô/porta
+		U.box(st, Vector3(0, 0.77, -2.19), Vector3(0.72, 0.2, 0.045), dark)
+		for gy in [0.72, 0.77, 0.82]:
+			U.box(st, Vector3(0, gy, -2.215), Vector3(0.62, 0.018, 0.012), Color(0.38, 0.4, 0.42))
+		U.box(st, Vector3(0, 0.47, -2.22), Vector3(1.9, 0.18, 0.18), Color(0.18, 0.18, 0.2))
+		U.box(st, Vector3(0, 0.46, 2.22), Vector3(1.9, 0.18, 0.18), Color(0.18, 0.18, 0.2))
+		U.box(st, Vector3(0, 0.62, -2.25), Vector3(0.42, 0.12, 0.025), Color(0.78, 0.8, 0.82))
+		U.box(st, Vector3(0, 0.62, 2.25), Vector3(0.42, 0.12, 0.025), Color(0.78, 0.8, 0.82))
+		# teto solar e divisões subtis do vidro
+		U.box(st, Vector3(0, 1.445, 0.2), Vector3(0.62, 0.025, 0.72), Color(0.06, 0.1, 0.14))
+		U.box(st, Vector3(0, 1.445, -0.68), Vector3(1.48, 0.025, 0.035), Color(0.16, 0.17, 0.19))
 		_sedan = st.commit()
 	return _sedan
 
