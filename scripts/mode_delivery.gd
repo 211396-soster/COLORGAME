@@ -462,6 +462,10 @@ func _loading_logic() -> void:
 			if d < bd:
 				bd = d
 				best = pl
+		if best == null:
+			lbl_hint.text = "Não há mais itens deste tipo disponíveis."
+			ui.set_visible_button("act", false)
+			return
 		_guide_at(best["pos"] + Vector3(0, 1.4, 0))
 		var close = bd < 2.4
 		(best["node"].get_meta("ring") as Node3D).visible = true
