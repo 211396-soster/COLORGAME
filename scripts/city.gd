@@ -39,8 +39,8 @@ var _store_info: Array = []
 func setup(rad: int) -> void:
 	radius = rad
 	_mat_flat = U.vcol_mat(0.9)
-	_mat_road = _tex_mat("res://tex/ph/asphalt.jpg", 0.22, Color(1.15, 1.15, 1.15), 0.9)
-	_mat_walk = _tex_mat("res://tex/ph/walk.jpg", 0.45, Color(1.7, 1.7, 1.65), 0.85)
+	_mat_road = _tex_mat(_preferred_tex("res://tex/realism/Asphalt003_2K-JPG_Color.jpg", "res://tex/ph/asphalt.jpg"), 0.22, Color(1.08, 1.08, 1.08), 0.94)
+	_mat_walk = _tex_mat(_preferred_tex("res://tex/realism/PavingStones002_2K-JPG_Color.jpg", "res://tex/ph/walk.jpg"), 0.45, Color(1.25, 1.25, 1.22), 0.9)
 	var res = load("res://data/city.tres")
 	var txt = ""
 	if res != null:
@@ -58,6 +58,9 @@ func setup(rad: int) -> void:
 	_add_store()
 	loaded = true
 
+func _preferred_tex(primary: String, fallback: String) -> String:
+	return primary if ResourceLoader.exists(primary) else fallback
+
 func _tex_mat(path: String, scale: float, tint: Color, rough: float) -> StandardMaterial3D:
 	var m = U.vcol_mat(rough)
 	if ResourceLoader.exists(path):
@@ -67,9 +70,17 @@ func _tex_mat(path: String, scale: float, tint: Color, rough: float) -> Standard
 		m.uv1_scale = Vector3(scale, scale, scale)
 		m.albedo_color = tint
 		# Micro-relevo sutil para quebrar o aspecto liso sem aumentar o tamanho do projeto.
+		var normal_path = path.replace("_Color.jpg", "_NormalGL.jpg")
+		var roughness_path = path.replace("_Color.jpg", "_Roughness.jpg")
 		m.normal_enabled = true
-		m.normal_texture = U.detail_normal_texture(17 if scale < 0.3 else 31)
-		m.normal_scale = 0.28 if scale < 0.3 else 0.18
+		if path.begins_with("res://tex/realism/") and ResourceLoader.exists(normal_path):
+			m.normal_texture = load(normal_path)
+			m.normal_scale = 0.55 if scale < 0.3 else 0.35
+		else:
+			m.normal_texture = U.detail_normal_texture(17 if scale < 0.3 else 31)
+			m.normal_scale = 0.28 if scale < 0.3 else 0.18
+		if path.begins_with("res://tex/realism/") and ResourceLoader.exists(roughness_path):
+			m.roughness_texture = load(roughness_path)
 		m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 	else:
 		m.albedo_color = Color(0.3, 0.3, 0.32) if scale < 0.3 else Color(0.7, 0.7, 0.67)
