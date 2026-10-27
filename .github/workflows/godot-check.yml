@@ -14,12 +14,25 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Check project files are present
+        id: project
+        shell: bash
+        run: |
+          if [ -f project.godot ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::project.godot ainda não está no repositório. A verificação Godot será pulada até o projeto ser enviado."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Set up Godot 4.4.1
+        if: steps.project.outputs.present == 'true'
         uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.4.1
           use-dotnet: false
       - name: Show Godot version
+        if: steps.project.outputs.present == 'true'
         run: godot --version
       - name: Import project in headless editor
+        if: steps.project.outputs.present == 'true'
         run: godot --headless --editor --path . --quit
