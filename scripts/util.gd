@@ -15,6 +15,29 @@ static func vcol_mat(rough: float = 0.85) -> StandardMaterial3D:
 	m.roughness = rough
 	return m
 
+# Textura normal procedural reutilizável para dar micro-relevo a asfalto e concreto.
+# É gerada uma vez por sessão, sem depender de arquivos externos ou downloads em tempo de jogo.
+static var _detail_normal_cache: Dictionary = {}
+
+static func detail_normal_texture(seed_value: int = 17) -> Texture2D:
+	var cache_key = str(seed_value)
+	if _detail_normal_cache.has(cache_key):
+		return _detail_normal_cache[cache_key]
+	var height = Image.create(128, 128, false, Image.FORMAT_RGBA8)
+	var noise = FastNoiseLite.new()
+	noise.seed = seed_value
+	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
+	noise.frequency = 0.075
+	for y in range(128):
+		for x in range(128):
+			var n = noise.get_noise_2d(float(x), float(y))
+			var v = clampf(0.5 + n * 0.11, 0.0, 1.0)
+			height.set_pixel(x, y, Color(v, v, v, 1.0))
+	var normal_image = height.bump_map_to_normal_map(1.35)
+	var texture = ImageTexture.create_from_image(normal_image)
+	_detail_normal_cache[cache_key] = texture
+	return texture
+
 static func emissive_mat(color: Color, energy: float = 1.5) -> StandardMaterial3D:
 	var m = StandardMaterial3D.new()
 	m.albedo_color = color
@@ -149,8 +172,10 @@ static func make_env(kind: String, shadows: bool) -> Node3D:
 		env.ambient_light_energy = 1.0
 		env.fog_enabled = true
 		env.fog_light_color = Color(0.72, 0.82, 0.93)
-		env.fog_density = 0.0014
-		sun.light_energy = 1.3
+		env.fog_density = 0.0011
+		env.fog_sun_scatter = 0.08
+		env.ambient_light_sky_contribution = 0.8
+		sun.light_energy = 1.25
 		sun.light_color = Color(1.0, 0.94, 0.82)
 	elif kind == "shop":
 		env.background_mode = Environment.BG_COLOR
@@ -173,8 +198,14 @@ static func make_env(kind: String, shadows: bool) -> Node3D:
 		sun.light_energy = 0.0
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	env.adjustment_enabled = true
-	env.adjustment_saturation = 1.18
-	env.adjustment_contrast = 1.06
+	env.adjustment_saturation = 1.05
+	env.adjustment_contrast = 1.07
+	# Bloom muito discreto: realça superfícies iluminadas sem criar aparência de filtro.
+	env.glow_enabled = true
+	env.glow_intensity = 0.28
+	env.glow_strength = 0.65
+	env.glow_bloom = 0.04
+	env.glow_hdr_threshold = 1.25
 	we.environment = env
 	root.add_child(we)
 	sun.shadow_enabled = shadows and kind != "dark"
