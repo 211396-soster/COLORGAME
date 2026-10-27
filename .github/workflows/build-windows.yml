@@ -30,6 +30,7 @@ jobs:
         with:
           version: 4.4.1
           use-dotnet: false
+          include-templates: true
 
       - name: Import project resources
         run: godot --headless --editor --path . --quit
