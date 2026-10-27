@@ -71,6 +71,30 @@ static func build(shirt: Color, skin: Color, hair: Color, pants: Color, cap: boo
 		var e = _mi(eye, ecol, body, Vector3(0.065 * sx, 1.62, -0.16))
 		if zombie:
 			e.material_override = U.emissive_mat(Color(1, 0.1, 0.05), 2.0)
+	# Detalhes de rosto, pescoço e uniforme para silhuetas menos genéricas.
+	var neck = CylinderMesh.new()
+	neck.top_radius = 0.07
+	neck.bottom_radius = 0.08
+	neck.height = 0.14
+	neck.radial_segments = 12
+	_mi(neck, skin, body, Vector3(0, 1.39, 0))
+	var ear = SphereMesh.new()
+	ear.radius = 0.045
+	ear.height = 0.08
+	ear.radial_segments = 10
+	ear.rings = 5
+	for sx in [-1, 1]:
+		_mi(ear, skin, body, Vector3(0.17 * sx, 1.59, -0.005))
+	var nose = SphereMesh.new()
+	nose.radius = 0.035
+	nose.height = 0.075
+	nose.radial_segments = 10
+	nose.rings = 5
+	_mi(nose, skin.darkened(0.04), body, Vector3(0, 1.59, -0.177))
+	var brow = BoxMesh.new()
+	brow.size = Vector3(0.07, 0.018, 0.025)
+	for sx in [-1, 1]:
+		_mi(brow, hair.darkened(0.1), body, Vector3(0.065 * sx, 1.665, -0.16))
 	# logo no peito e nas costas
 	if uniform_logo:
 		var q = QuadMesh.new()

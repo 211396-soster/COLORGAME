@@ -281,6 +281,14 @@ func _add_store() -> void:
 	s.position = store_pos
 	s.rotation.y = store_yaw
 	add_child(s)
+	# Veículo escaneado CC0 como peça de cenário junto à loja; não interfere na picape jogável.
+	var parked_car = RealAssets.instantiate("covered_car")
+	if parked_car != null:
+		var side_offset = Basis(Vector3.UP, store_yaw) * Vector3(15.0, 0.0, 5.5)
+		parked_car.position = store_pos + side_offset
+		parked_car.rotation.y = store_yaw
+		parked_car.scale = Vector3(0.82, 0.82, 0.82)
+		add_child(parked_car)
 
 # ---------------------------------------------------------------- setores
 
@@ -475,6 +483,23 @@ func _make_chunk(k: Vector2i) -> void:
 		root.add_child(U.mesh_inst(st_house, Facade.wall_material(0)))
 	if ntower > 0:
 		root.add_child(U.mesh_inst(st_tower, Facade.wall_material(1)))
+	# Modelos escaneados CC0 substituem parte da vegetação/postes simples quando disponíveis.
+	# Mantemos MultiMesh para o restante da cidade para não explodir o custo de renderização.
+	if trees.size() > 0 and RealAssets.has_model("tree_small_02") and absi(k.x * 31 + k.y * 17) % 3 == 0:
+		var tree_xf: Transform3D = trees[0]
+		var realistic_tree = RealAssets.instantiate("tree_small_02")
+		if realistic_tree != null:
+			realistic_tree.transform = tree_xf
+			root.add_child(realistic_tree)
+			trees.remove_at(0)
+			tree_cols.remove_at(0)
+	if poles.size() > 0 and RealAssets.has_model("street_lamp_01") and absi(k.x * 13 + k.y * 29) % 4 == 0:
+		var pole_xf: Transform3D = poles[0]
+		var realistic_lamp = RealAssets.instantiate("street_lamp_01")
+		if realistic_lamp != null:
+			realistic_lamp.transform = pole_xf
+			root.add_child(realistic_lamp)
+			poles.remove_at(0)
 	_mm(root, Props.tree_mesh(), trees, tree_cols)
 	_mm(root, Props.pole_mesh(), poles, [])
 	_mm(root, Vehicles.sedan_mesh(), cars, car_cols)
