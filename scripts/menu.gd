@@ -85,7 +85,7 @@ func _ready() -> void:
 	b.pressed.connect(func(): _show(main_box))
 	opts_box.add_child(b)
 	# créditos
-	var txt = UIKit.label("Mapa: dados do OpenStreetMap (c) colaboradores do OpenStreetMap,\nlicença ODbL - openstreetmap.org/copyright\n\nJogo offline feito na Godot 4.\nModelos 3D gerados por código.\nTexturas (asfalto, calçada, grama) e céu HDRI: Poly Haven (CC0).\nFachada: fotos da Color Tintas, Passo Fundo.", 22)
+	var txt = UIKit.label("Mapa: dados do OpenStreetMap (c) colaboradores do OpenStreetMap,\nlicença ODbL - openstreetmap.org/copyright\n\nJogo offline feito na Godot 4.\nModelos 3D: Poly Haven (CC0) — carro coberto, árvore e poste.\nMateriais PBR de asfalto/calçada: ambientCG (CC0).\nDetalhes da picape, carros e personagens: modelos procedurais do jogo.\nFachada: fotos da Color Tintas, Passo Fundo.", 22)
 	cred_box.add_child(txt)
 	b = UIKit.button("VOLTAR")
 	b.pressed.connect(func(): _show(main_box))
