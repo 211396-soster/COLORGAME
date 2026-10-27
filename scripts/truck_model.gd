@@ -55,6 +55,15 @@ static func build(with_cargo: bool = true) -> Node3D:
 	for sx in [-1, 1]:
 		U.box(st, Vector3(0.7 * sx, 0.98, -2.62), Vector3(0.38, 0.2, 0.08), Color(1.0, 0.97, 0.8))
 		U.box(st, Vector3(0.88 * sx, 1.1, 2.61), Vector3(0.18, 0.28, 0.06), Color(0.9, 0.1, 0.1))
+		# espelhos, maçanetas e frisos da cabine
+		U.box(st, Vector3(1.02 * sx, 1.52, -0.62), Vector3(0.18, 0.13, 0.22), dark)
+		U.box(st, Vector3(1.105 * sx, 1.52, -0.62), Vector3(0.025, 0.075, 0.14), Color(0.25, 0.35, 0.42))
+		U.box(st, Vector3(0.97 * sx, 1.48, 0.2), Vector3(0.035, 0.045, 0.2), steel if false else Color(0.65, 0.67, 0.7))
+		U.box(st, Vector3(0.97 * sx, 1.25, -1.65), Vector3(0.035, 0.025, 0.45), Color(0.75, 0.76, 0.78))
+	# frisos horizontais na grade frontal e placa
+	for yy in [0.91, 0.97, 1.03]:
+		U.box(st, Vector3(0, yy, -2.66), Vector3(0.72, 0.018, 0.02), Color(0.42, 0.44, 0.47))
+	U.box(st, Vector3(0, 0.66, -2.76), Vector3(0.42, 0.12, 0.025), Color(0.88, 0.89, 0.9))
 	# trilhos de amarração na caçamba (aço)
 	var steel = Color(0.62, 0.64, 0.7)
 	for sx in [-1, 1]:
