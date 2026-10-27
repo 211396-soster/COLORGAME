@@ -281,6 +281,14 @@ func _add_store() -> void:
 	s.position = store_pos
 	s.rotation.y = store_yaw
 	add_child(s)
+	# Veículo escaneado CC0 como peça de cenário junto à loja; não interfere na picape jogável.
+	var parked_car = RealAssets.instantiate("covered_car")
+	if parked_car != null:
+		var side_offset = Basis(Vector3.UP, store_yaw) * Vector3(15.0, 0.0, 5.5)
+		parked_car.position = store_pos + side_offset
+		parked_car.rotation.y = store_yaw
+		parked_car.scale = Vector3(0.82, 0.82, 0.82)
+		add_child(parked_car)
 
 # ---------------------------------------------------------------- setores
 
