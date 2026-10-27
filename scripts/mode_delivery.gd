@@ -397,7 +397,8 @@ func _walk(delta: float) -> void:
 	var amount = clampf(dir.length(), 0.0, 1.0)
 	if amount > 0.12:
 		var d = dir.normalized()
-		var np = player.position + d * 5.4 * amount * delta
+		var foot_speed = 2.8 if carrying != "" else 3.8
+		var np = player.position + d * foot_speed * amount * delta
 		pyaw = lerp_angle(pyaw, atan2(-d.x, -d.z), minf(1.0, 14.0 * delta))
 		player.rotation.y = pyaw
 		np = city.push_out(np, 0.5)
