@@ -1,0 +1,51 @@
+name: Build Windows executable
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "project.godot"
+      - "export_presets.cfg"
+      - "assets/**"
+      - "data/**"
+      - "scenes/**"
+      - "scripts/**"
+      - "tex/**"
+      - "icon.svg"
+      - ".github/workflows/build-windows.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  export-windows:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Godot 4.4.1
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.4.1
+          use-dotnet: false
+
+      - name: Import project resources
+        run: godot --headless --editor --path . --quit
+
+      - name: Export Windows executable
+        run: |
+          mkdir -p build/windows
+          godot --headless --path . --export-release "Windows" build/windows/ColorTintas.exe
+
+      - name: Verify executable exists
+        run: test -s build/windows/ColorTintas.exe
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ColorTintas-Windows
+          path: build/windows/ColorTintas.exe
+          if-no-files-found: error
+          retention-days: 14
