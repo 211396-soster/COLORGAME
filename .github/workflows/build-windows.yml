@@ -131,3 +131,27 @@ jobs:
           path: build/ColorTintas.apk
           if-no-files-found: error
           retention-days: 14
+
+  package-builds:
+    runs-on: ubuntu-latest
+    needs: [export-windows, export-android]
+    steps:
+      - name: Download Windows executable
+        uses: actions/download-artifact@v4
+        with:
+          name: ColorTintas-Windows
+          path: package/Windows
+
+      - name: Download Android APK
+        uses: actions/download-artifact@v4
+        with:
+          name: ColorTintas-Android-APK
+          path: package/Android
+
+      - name: Upload combined PC and Android package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ColorTintas-PC-Android
+          path: package/
+          if-no-files-found: error
+          retention-days: 14
