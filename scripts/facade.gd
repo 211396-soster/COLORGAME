@@ -7,31 +7,51 @@ static var _wall_mats: Dictionary = {}
 ## kind 0 = casas (janela com venezianas), 1 = prédios (faixa de vidro)
 static func wall_material(kind: int = 0) -> StandardMaterial3D:
 	if not _wall_mats.has(kind):
-		var img = Image.create(128, 128, true, Image.FORMAT_RGBA8)
-		img.fill(Color(1, 1, 1, 1))
+		# Uma textura por andar, com reboco/concreto, caixilhos, vidros e pequenas variações.
+		# O padrão repete-se em escala real pelas UVs já geradas em city.gd.
+		var size = 256
+		var img = Image.create(size, size, false, Image.FORMAT_RGBA8)
+		var rng = RandomNumberGenerator.new()
+		rng.seed = 704 + kind * 91
+		var wall = Color(0.76, 0.75, 0.71) if kind == 0 else Color(0.68, 0.69, 0.7)
+		for y in range(size):
+			for x in range(size):
+				var n = rng.randf_range(-0.025, 0.025)
+				img.set_pixel(x, y, Color(clampf(wall.r + n, 0, 1), clampf(wall.g + n, 0, 1), clampf(wall.b + n, 0, 1), 1))
 		if kind == 0:
-			img.fill_rect(Rect2i(0, 0, 128, 4), Color(0.9, 0.9, 0.92))
-			img.fill_rect(Rect2i(0, 118, 128, 10), Color(0.72, 0.72, 0.74))
-			img.fill_rect(Rect2i(22, 30, 16, 62), Color(0.2, 0.5, 0.32))
-			img.fill_rect(Rect2i(90, 30, 16, 62), Color(0.2, 0.5, 0.32))
-			img.fill_rect(Rect2i(40, 28, 48, 66), Color(0.97, 0.97, 0.98))
-			img.fill_rect(Rect2i(44, 32, 40, 58), Color(0.3, 0.45, 0.6))
-			img.fill_rect(Rect2i(44, 32, 40, 18), Color(0.5, 0.66, 0.8))
-			img.fill_rect(Rect2i(62, 32, 4, 58), Color(0.97, 0.97, 0.98))
-			img.fill_rect(Rect2i(36, 94, 56, 6), Color(0.6, 0.6, 0.64))
+			# Casa: duas janelas com esquadrias claras, reflexo azul e peitoril.
+			for x0 in [30, 150]:
+				img.fill_rect(Rect2i(x0 - 4, 34, 84, 116), Color(0.91, 0.9, 0.85))
+				img.fill_rect(Rect2i(x0, 38, 76, 106), Color(0.13, 0.2, 0.26))
+				img.fill_rect(Rect2i(x0 + 4, 42, 31, 46), Color(0.42, 0.59, 0.69))
+				img.fill_rect(Rect2i(x0 + 39, 42, 33, 46), Color(0.27, 0.42, 0.53))
+				img.fill_rect(Rect2i(x0 + 4, 92, 31, 48), Color(0.21, 0.31, 0.37))
+				img.fill_rect(Rect2i(x0 + 39, 92, 33, 48), Color(0.34, 0.48, 0.56))
+				img.fill_rect(Rect2i(x0 + 36, 38, 4, 106), Color(0.91, 0.9, 0.85))
+				img.fill_rect(Rect2i(x0 - 6, 146, 88, 7), Color(0.84, 0.83, 0.79))
+				img.fill_rect(Rect2i(x0 + 7, 44, 3, 94), Color(0.75, 0.76, 0.75))
+			img.fill_rect(Rect2i(0, 12, 256, 5), Color(0.92, 0.91, 0.87))
+			img.fill_rect(Rect2i(0, 226, 256, 8), Color(0.62, 0.61, 0.58))
 		else:
-			img.fill_rect(Rect2i(0, 0, 128, 18), Color(0.93, 0.93, 0.94))
-			img.fill_rect(Rect2i(0, 104, 128, 24), Color(0.82, 0.82, 0.84))
-			img.fill_rect(Rect2i(0, 18, 128, 86), Color(0.3, 0.45, 0.62))
-			img.fill_rect(Rect2i(0, 18, 128, 26), Color(0.5, 0.68, 0.84))
-			for mx in [0, 42, 84]:
-				img.fill_rect(Rect2i(mx, 18, 4, 86), Color(0.9, 0.9, 0.92))
+			# Prédio: três vãos por fachada, vidro com reflexos diagonais e faixas de laje.
+			img.fill_rect(Rect2i(0, 0, 256, 15), Color(0.84, 0.84, 0.82))
+			img.fill_rect(Rect2i(0, 241, 256, 15), Color(0.82, 0.82, 0.8))
+			for x0 in [12, 96, 180]:
+				img.fill_rect(Rect2i(x0 - 3, 20, 66, 204), Color(0.82, 0.82, 0.8))
+				img.fill_rect(Rect2i(x0, 23, 60, 196), Color(0.11, 0.18, 0.23))
+				img.fill_rect(Rect2i(x0 + 4, 27, 24, 188), Color(0.32, 0.47, 0.56))
+				img.fill_rect(Rect2i(x0 + 31, 27, 25, 188), Color(0.17, 0.29, 0.36))
+				img.fill_rect(Rect2i(x0 + 7, 31, 4, 180), Color(0.55, 0.66, 0.7))
+				for yy in [72, 122, 172]:
+					img.fill_rect(Rect2i(x0, yy, 60, 4), Color(0.72, 0.73, 0.72))
+					img.fill_rect(Rect2i(x0 - 2, yy + 4, 64, 3), Color(0.88, 0.87, 0.84))
+				img.fill_rect(Rect2i(x0 - 3, 219, 66, 5), Color(0.9, 0.89, 0.86))
 		img.generate_mipmaps()
 		var m = StandardMaterial3D.new()
 		m.albedo_texture = ImageTexture.create_from_image(img)
 		m.vertex_color_use_as_albedo = true
-		m.roughness = 0.85
-		# Relevo de reboco discreto para que as fachadas não pareçam plástico liso.
+		m.roughness = 0.72 if kind == 0 else 0.32
+		m.metallic = 0.0 if kind == 0 else 0.12
 		m.normal_enabled = true
 		m.normal_texture = U.detail_normal_texture(43 + kind)
 		m.normal_scale = 0.12
