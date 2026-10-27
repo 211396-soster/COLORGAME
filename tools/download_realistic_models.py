@@ -101,7 +101,11 @@ def main():
     manifest = {}
     for asset_id, display_name in ASSETS.items():
         print(f"Fetching {display_name} from Poly Haven...", flush=True)
-        install_asset(asset_id, display_name, manifest)
+        try:
+            install_asset(asset_id, display_name, manifest)
+        except Exception as exc:
+            # External asset endpoints may change; keep procedural fallbacks usable.
+            print(f"WARNING: skipped optional model {asset_id}: {exc}", flush=True)
     (DEST / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(f"Manifest written to {(DEST / 'manifest.json').relative_to(ROOT)}", flush=True)
 
